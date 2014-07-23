@@ -24,21 +24,17 @@ public class CollisionListener implements ContactListener {
 	public void preSolve(Contact contact, Manifold oldManifold) {
 		// TODO Auto-generated method stub
 		//System.out.println("PRS");
-		if(contact.getFixtureA().getBody().getUserData() != null && contact.getFixtureB().getBody().getUserData() != null)
-		{
-			String nameA = ((MyUserData)contact.getFixtureA().getBody().getUserData()).getName();
-		
-			String nameB = ((MyUserData)contact.getFixtureB().getBody().getUserData()).getName();
-			if(nameA != null && nameB != null){
-				if(nameA == "player" && nameB == "brick"){
+		String nameA = ((MyUserData)contact.getFixtureA().getBody().getUserData()).getName();
+		String nameB = ((MyUserData)contact.getFixtureB().getBody().getUserData()).getName();
+		if(nameA != null && nameB != null){
+		if(nameA == "player" && nameB == "brick"){
 		
 	//		System.out.println("c");
 		//contact.getFixtureB().getBody().s;
-				}
-				if(nameA == "brick" && nameB == "player"){
-					contact.setEnabled(false);
-				}
-			}
+		}
+		if(nameA == "brick" && nameB == "player"){
+			contact.setEnabled(false);
+		}
 		}
 	}
 
