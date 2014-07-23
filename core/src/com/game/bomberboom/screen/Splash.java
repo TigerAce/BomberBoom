@@ -6,12 +6,14 @@ import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.game.bomberboom.core.BomberBoom;
+import com.game.bomberboom.core.InputController;
 import com.game.bomberboom.tween.SpriteAccessor;
 
 /**
@@ -47,6 +49,25 @@ public class Splash implements Screen {
 
         // Set the current game state to BomberBoom.SPLASH_SCREEN_STATE
         ((BomberBoom) Gdx.app.getApplicationListener()).setGameState(BomberBoom.SPLASH_SCREEN_STATE);
+
+        /**
+         * Keyboard bindings
+         */
+        Gdx.input.setInputProcessor(new InputController(){
+            @Override
+            public boolean keyUp(int keycode){
+                        /**
+                         * KeyUp bindings for splash screen state
+                         */
+                        switch (keycode) {
+                            case Input.Keys.ESCAPE:
+                                // Skip the splash screen and go into GamePlay screen
+                                ((Game)Gdx.app.getApplicationListener()).setScreen(new GamePlay());
+                                break;
+                        }
+                return true;
+            }
+        });
 
         batch = new SpriteBatch();
         tweenManager = new TweenManager();
