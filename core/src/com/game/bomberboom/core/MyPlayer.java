@@ -16,28 +16,30 @@ import com.game.bomberboom.model.Player;
 public class MyPlayer extends Player{
 
 	
-	private boolean overSpeed;
-	private float maxSpeed = 0.3f;
-	private boolean leftMove, rightMove, upMove, downMove;
+	/**
+	 * box2d parameters
+	 */
 	private World world;
-	private Vector2 movement;
+	private BodyDef playerDef;
+	private FixtureDef playerFixtureDef;
+	private Shape playerShape;
 	private Body playerBody;
 	
-	public enum Direction {UP, DOWN, LEFT, RIGHT};
 	
+	private boolean leftMove, rightMove, upMove, downMove;
+	public enum Direction {UP, DOWN, LEFT, RIGHT};	
 	private Direction dir;
-	private BodyDef playerDef;
-	private FixtureDef fixtureDef;
-	private Shape shape;
+	private float size;
 	
 	
-	public MyPlayer(int xPos, int yPos, float speed, World world, Direction dir) {
+	public MyPlayer(int xPos, int yPos, float speed, float size, World world, Direction dir) {
 		super(xPos, yPos, speed);
 		this.world = world;
-		this.movement = new Vector2(0,0);
+		this.size = size;
 		this.dir = dir;
+		
 		playerDef = new BodyDef();
-		fixtureDef = new FixtureDef();
+		playerFixtureDef = new FixtureDef();
 		
 		//default settings of player
 		playerDef.type = BodyType.DynamicBody;
@@ -45,19 +47,17 @@ public class MyPlayer extends Player{
 		playerDef.fixedRotation = true;
 		
 		//shape
-		shape = new PolygonShape();
-		((PolygonShape) shape).setAsBox(0.5f, 0.5f);
+		playerShape = new PolygonShape();
+		((PolygonShape) playerShape).setAsBox(size / 2, size / 2);
 		
 		//fixture
 	
-		fixtureDef.density = 2f;
-		fixtureDef.friction = .25f;
-		fixtureDef.restitution = 0f;
+		playerFixtureDef.density = 2f;
+		playerFixtureDef.friction = .25f;
+		playerFixtureDef.restitution = 0f;
 	}
 
-	protected void finalize ()  {
-		shape.dispose();
-    }
+	
 	
 	public Direction getDir() {
 		return dir;
@@ -99,82 +99,75 @@ public class MyPlayer extends Player{
 		this.downMove = downMove;
 	}
 
-	/**
-	 * getter setter
-	 * @return
-	 */
-	public World getWorld() {
-		return world;
+
+	public BodyDef getPlayerDef() {
+		return playerDef;
 	}
 
-	public void setWorld(World world) {
-		this.world = world;
+
+
+	public void setPlayerDef(BodyDef playerDef) {
+		this.playerDef = playerDef;
 	}
 
-	public Vector2 getMovement() {
-		return movement;
+
+
+	public FixtureDef getPlayerFixtureDef() {
+		return playerFixtureDef;
 	}
 
-	public void setMovement(Vector2 movement) {
-		this.movement = movement;
+
+
+	public void setPlayerFixtureDef(FixtureDef playerFixtureDef) {
+		this.playerFixtureDef = playerFixtureDef;
 	}
 
-	public Body getBody() {
-		return playerBody;
+
+
+	public Shape getPlayerShape() {
+		return playerShape;
 	}
 
-	public void setBody(Body playerBody) {
-		this.playerBody = playerBody;
+
+
+	public void setPlayerShape(Shape playerShape) {
+		this.playerShape = playerShape;
 	}
+
+
 
 	public Body getPlayerBody() {
 		return playerBody;
 	}
 
+
+
 	public void setPlayerBody(Body playerBody) {
 		this.playerBody = playerBody;
 	}
 
-	public BodyDef getBodyDef() {
-		return playerDef;
+
+
+	public float getSize() {
+		return size;
 	}
 
-	public void setBodyDef(BodyDef bodyDef) {
-		this.playerDef = bodyDef;
+
+
+	public void setSize(float size) {
+		this.size = size;
 	}
 
-	public FixtureDef getFixtureDef() {
-		return fixtureDef;
-	}
 
-	public void setFixtureDef(FixtureDef fixtureDef) {
-		this.fixtureDef = fixtureDef;
-	}
 
-	public Shape getShape() {
-		return shape;
-	}
-
-	public void setShape(Shape shape) {
-		this.shape = shape;
-	}
-
-	
-	
-	
-	
-	
-	
-	
-	
 	@Override
 	public void draw() {
 		
 		//set up whatever the shape is
-		fixtureDef.shape = shape;
+		playerFixtureDef.shape = playerShape;
 
 		playerBody = world.createBody(playerDef);
-		playerBody.createFixture(fixtureDef);
+		playerBody.createFixture(playerFixtureDef);
 		playerBody.setUserData(new MyUserData("player", this, null));
 		
 	}
@@ -185,28 +178,28 @@ public class MyPlayer extends Player{
 			Vector2 vel = playerBody.getLinearVelocity();
 			float velChange = (-speed) - vel.x;  //move left: -speed on x
 			float force = (float) (playerBody.getMass() * velChange / (1.0 /60.0));
-			getBody().applyForce(new Vector2(force, 0), playerBody.getWorldCenter(), true);
+			getPlayerBody().applyForce(new Vector2(force, 0), playerBody.getWorldCenter(), true);
 		}
 		if(rightMove){
 			
 			Vector2 vel = playerBody.getLinearVelocity();
 			float velChange = (speed) - vel.x;  
 			float force = (float) (playerBody.getMass() * velChange / (1.0 /60.0));
-			getBody().applyForce(new Vector2(force, 0), playerBody.getWorldCenter(), true);
+			getPlayerBody().applyForce(new Vector2(force, 0), playerBody.getWorldCenter(), true);
 		}
 		if(upMove){
 
 			Vector2 vel = playerBody.getLinearVelocity();
 			float velChange = (speed) - vel.y;  
 			float force = (float) (playerBody.getMass() * velChange / (1.0 /60.0));
-			getBody().applyForce(new Vector2(0, force), playerBody.getWorldCenter(), true);
+			getPlayerBody().applyForce(new Vector2(0, force), playerBody.getWorldCenter(), true);
 		}
 		if(downMove){
 
 			Vector2 vel = playerBody.getLinearVelocity();
 			float velChange = (-speed) - vel.y;  
 			float force = (float) (playerBody.getMass() * velChange / (1.0 /60.0));
-			getBody().applyForce(new Vector2(0, force), playerBody.getWorldCenter(), true);
+			getPlayerBody().applyForce(new Vector2(0, force), playerBody.getWorldCenter(), true);
 		}
 	}
 
@@ -250,7 +243,7 @@ public class MyPlayer extends Player{
 		case UP:
 			b = new MyBomb(0, 0, 3, 5000, 5000, world);
 			b.setX(playerBody.getPosition().x);
-			b.setY(playerBody.getPosition().y + 1 + b.getShape().getRadius());
+			b.setY(playerBody.getPosition().y + 1 + b.getBombShape().getRadius());
 			b.setOwner(this);
 			b.setDrawn(false);
 		
@@ -260,7 +253,7 @@ public class MyPlayer extends Player{
 		case DOWN:
 			b = new MyBomb(0, 0, 3, 5000, 5000, world);
 			b.setX(playerBody.getPosition().x);
-			b.setY(playerBody.getPosition().y  - 1 - b.getShape().getRadius());
+			b.setY(playerBody.getPosition().y  - 1 - b.getBombShape().getRadius());
 			b.setOwner(this);
 			b.setDrawn(false);
 	
@@ -270,7 +263,7 @@ public class MyPlayer extends Player{
 		case LEFT:
 			b = new MyBomb(0, 0, 3, 5000, 5000, world);
 			b.setY(playerBody.getPosition().y );
-			b.setX(playerBody.getPosition().x - 1 - b.getShape().getRadius());
+			b.setX(playerBody.getPosition().x - 1 - b.getBombShape().getRadius());
 			b.setOwner(this);
 			b.setDrawn(false);
 	
@@ -280,7 +273,7 @@ public class MyPlayer extends Player{
 		case RIGHT:
 			b = new MyBomb(0, 0, 3, 5000, 5000, world);
 			b.setY(playerBody.getPosition().y );
-			b.setX(playerBody.getPosition().x + 1 + b.getShape().getRadius());
+			b.setX(playerBody.getPosition().x + 1 + b.getBombShape().getRadius());
 			b.setOwner(this);
 			b.setDrawn(false);
 		
@@ -291,6 +284,9 @@ public class MyPlayer extends Player{
 		
 	}
 	
+	protected void finalize ()  {
+		playerShape.dispose();
+    }
 	
 
 }

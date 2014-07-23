@@ -40,7 +40,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.game.bomberboom.model.Crate;
+import com.game.bomberboom.model.Barrier;
 import com.game.bomberboom.core.CollisionListener;
 import com.game.bomberboom.core.InputController;
 import com.game.bomberboom.core.MyBomb;
@@ -67,24 +67,19 @@ public class GamePlay implements Screen {
 	BitmapFont fps;
 	
 	RayHandler handler;
-	//private Vector2 movement;
+
 	CollisionListener cl;
 	private MyPlayer player, player2;
-	private MyBrick brick;
+	private MyBrick testBrick;
 	@Override
 	public void render(float delta) {
-		
+		/**
+		 * render background
+		 */
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 
-		
-		
-		//render world
-		world.step(TIMESTEP, VELOCITYITERATIONS, POSITIONITERATIONS);
-		
-		
-	
 		//move player
 		player.move();
 	
@@ -100,13 +95,13 @@ public class GamePlay implements Screen {
 		}
 		
 		
-		//if(e.isCompleted())
+		//render camera 
 		camera.position.set(0, 0, 0);
 		camera.update();
 	
 		
 		/**
-		 * draw sprites
+		 * draw sprite
 		 */
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
@@ -117,11 +112,13 @@ public class GamePlay implements Screen {
 		
 		world.getBodies(bodies);
 		for(Body body : bodies){
+			if(body.getUserData() != null){
 			Sprite sprite = ((MyUserData)body.getUserData()).getSprite();
 			if( sprite != null){
 				sprite.setPosition(body.getPosition().x - sprite.getWidth()/2, body.getPosition().y - sprite.getHeight()/2);
 				sprite.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
 				sprite.draw(batch);
+			}
 			}
 		}
 		batch.end();
@@ -133,7 +130,10 @@ public class GamePlay implements Screen {
 			handler.updateAndRender();
 			
 	
+	    //world render 
+		world.step(TIMESTEP, VELOCITYITERATIONS, POSITIONITERATIONS);
 		
+		//debug render
 		debugRenderer.render(this.world, camera.combined);
 		
 		
@@ -151,21 +151,38 @@ public class GamePlay implements Screen {
 	@Override
 	public void show() {
 		
+		/**********************************************************
+		 *                 environment setup                      *
+		 **********************************************************/
+		/**
+		 * box2d world setup
+		 */
 		world = new World(new Vector2(0, 0), true);
 		debugRenderer = new Box2DDebugRenderer();
 		
 	
+		/**
+		 * fps setup
+		 */
 		fps = new BitmapFont();
 		fps.setScale(0.1f);
 		
+		/**
+		 * sprite batch setup
+		 */
 		batch = new SpriteBatch();
 		
+		/**
+		 * camera setup
+		 */
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		
 		
-		  //in FooTest constructor
-			cl = new CollisionListener();
-		  world.setContactListener(cl);
+		/**
+		 * collision listener setup
+		 */
+		 cl = new CollisionListener();
+		 world.setContactListener(cl);
 	
 		  /**
 		   * lights setup
@@ -174,16 +191,33 @@ public class GamePlay implements Screen {
 		  new ConeLight(handler, 1000, new Color(1,1,1,1), 700, -30, -30, 60, 60);
 	//	 new PointLight(handler, 5000, new Color(1,1,1,1), 1000 ,Gdx.graphics.getWidth()/2-500, Gdx.graphics.getHeight()/2 - 400);
 		
-		player = new MyPlayer(0, -10, 10, world, Direction.LEFT);
+		  
+		  
+		  
+		  /**********************************************************
+		   *                 game objects creation and draw            *
+		   **********************************************************/
+		  
+		  /**
+		   * create player 
+		   */
+		  player = new MyPlayer(0, -10, 10, 1,world, Direction.LEFT);
 	
-		player.draw();
+		  player.draw();
+		  
+		  /**
+		   * create brick
+		   */
 		
+		  testBrick = new MyBrick(20, 20, 4, world);
+		  testBrick.draw();
+		  
 		/**
-		 * create crates
+		 * create crate
 		 */
 	//	brick = new MyBrick(0,0,1,world);
 	//	brick.draw();
-		MyCrate crate1 = new MyCrate(0, 0, 5, 4 ,world);
+		MyCrate crate1 = new MyCrate(0, 0, 4 ,world);
 		crate1.draw();
 		
 	//	MyCrate crate2 = new MyCrate(-10, -10, 8, 0.2f,world);
@@ -196,91 +230,10 @@ public class GamePlay implements Screen {
 	//	crate4.draw();
 		//player2.draw();
 		
-		Gdx.input.setInputProcessor(new InputController(){
-			public boolean keyDown(int keycode){
-				switch(keycode){
-				case Keys.ESCAPE:
-					System.exit(1);
-					break;
-				case Keys.W:
-					player.setUpMove(true);
-					player.setDir(Direction.UP);
-					//player.moveUp();
-					break;
-				case Keys.A:
-					player.setLeftMove(true);
-					player.setDir(Direction.LEFT);
-					//player.moveLeft();
-					break;
-				case Keys.S:
-					player.setDownMove(true);
-					player.setDir(Direction.DOWN);
-					//player.moveDown();
-					break;
-				case Keys.D:
-					player.setRightMove(true);
-					player.setDir(Direction.RIGHT);
-					//player.moveRight();
-					break;
-					
-				case Keys.F:
-					//brick.explodeFragment();
-					break;
-				
-				}
-				return true;
-			}
-			
-			public boolean keyUp(int keycode){
-				switch(keycode){
-				case Keys.ESCAPE:
-					System.exit(1);
-					break;
-				case Keys.W:
-					player.setUpMove(false);
-					player.getBody().setLinearVelocity(new Vector2(0,0));
-					world.clearForces();
-					break;
-				case Keys.D:
-					player.setRightMove(false);
-					player.getBody().setLinearVelocity(new Vector2(0,0));
-					world.clearForces();
-					break;
-				case Keys.A:
-					player.setLeftMove(false);
-					player.getBody().setLinearVelocity(new Vector2(0,0));
-					world.clearForces();
-					break;
-				case Keys.S:
-					player.setDownMove(false);
-					player.getBody().setLinearVelocity(new Vector2(0,0));
-					world.clearForces();
-				
-					break;
-				case Keys.SPACE:
-					player.placeBomb();
-					for(int i = 0; i < MyBomb.getBombList().size(); i++){
-						if(MyBomb.getBombList().get(i) != null && !MyBomb.getBombList().get(i).isDrawn()){
-							MyBomb.getBombList().get(i).draw();
-							MyBomb.getBombList().get(i).setDrawn(true);
-							MyBomb.getBombList().get(i).explode();
-						}
-					}
-					
-					break;
-				}
-				return true;
-			}
-		
-			public boolean scrolled(int amount){
-				camera.zoom += amount / 25f;
-				return true;
-			}
-		});
-	
+
 	
 		/**
-		 * create walls
+		 *  create walls      -----------need encapsulate
 		 */
 		/**
 		 * up wall
@@ -373,6 +326,91 @@ public class GamePlay implements Screen {
 	    rightWallShape.dispose();
 		
 	    
+	    /**********************************************************
+		 *                 input listener                         *
+		 **********************************************************/
+		Gdx.input.setInputProcessor(new InputController(){
+			public boolean keyDown(int keycode){
+				switch(keycode){
+				case Keys.ESCAPE:
+					System.exit(1);
+					break;
+				case Keys.W:
+					player.setUpMove(true);
+					player.setDir(Direction.UP);
+					//player.moveUp();
+					break;
+				case Keys.A:
+					player.setLeftMove(true);
+					player.setDir(Direction.LEFT);
+					//player.moveLeft();
+					break;
+				case Keys.S:
+					player.setDownMove(true);
+					player.setDir(Direction.DOWN);
+					//player.moveDown();
+					break;
+				case Keys.D:
+					player.setRightMove(true);
+					player.setDir(Direction.RIGHT);
+					//player.moveRight();
+					break;
+					
+				case Keys.F:
+					//testBrick.boom();
+					break;
+				
+				}
+				return true;
+			}
+			
+			public boolean keyUp(int keycode){
+				switch(keycode){
+				case Keys.ESCAPE:
+					System.exit(1);
+					break;
+				case Keys.W:
+					player.setUpMove(false);
+					player.getPlayerBody().setLinearVelocity(new Vector2(0,0));
+					world.clearForces();
+					break;
+				case Keys.D:
+					player.setRightMove(false);
+					player.getPlayerBody().setLinearVelocity(new Vector2(0,0));
+					world.clearForces();
+					break;
+				case Keys.A:
+					player.setLeftMove(false);
+					player.getPlayerBody().setLinearVelocity(new Vector2(0,0));
+					world.clearForces();
+					break;
+				case Keys.S:
+					player.setDownMove(false);
+					player.getPlayerBody().setLinearVelocity(new Vector2(0,0));
+					world.clearForces();
+				
+					break;
+				case Keys.SPACE:
+					player.placeBomb();
+					for(int i = 0; i < MyBomb.getBombList().size(); i++){
+						if(MyBomb.getBombList().get(i) != null && !MyBomb.getBombList().get(i).isDrawn()){
+							MyBomb.getBombList().get(i).draw();
+							MyBomb.getBombList().get(i).setDrawn(true);
+							MyBomb.getBombList().get(i).explode();
+						}
+					}
+					
+					break;
+				}
+				return true;
+			}
+		
+			public boolean scrolled(int amount){
+				camera.zoom += amount / 25f;
+				return true;
+			}
+		});
+	
 	    
 	  
 
