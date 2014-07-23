@@ -14,12 +14,16 @@ import box2dLight.RayHandler;
 
 
 
+
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -60,6 +64,8 @@ public class GamePlay implements Screen {
 	private final int VELOCITYITERATIONS = 8;
 	private final int POSITIONITERATIONS = 3;
 	
+	BitmapFont fps;
+	
 	RayHandler handler;
 	//private Vector2 movement;
 	CollisionListener cl;
@@ -98,11 +104,17 @@ public class GamePlay implements Screen {
 		camera.position.set(0, 0, 0);
 		camera.update();
 	
+		
 		/**
 		 * draw sprites
 		 */
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
+		 
+	
+		fps.draw(batch, Integer.toString(Gdx.graphics.getFramesPerSecond()), -30, 30);
+	
+		
 		world.getBodies(bodies);
 		for(Body body : bodies){
 			Sprite sprite = ((MyUserData)body.getUserData()).getSprite();
@@ -120,6 +132,7 @@ public class GamePlay implements Screen {
 			handler.setCombinedMatrix(camera.combined);
 			handler.updateAndRender();
 			
+	
 		
 		debugRenderer.render(this.world, camera.combined);
 		
@@ -140,6 +153,10 @@ public class GamePlay implements Screen {
 		
 		world = new World(new Vector2(0, 0), true);
 		debugRenderer = new Box2DDebugRenderer();
+		
+	
+		fps = new BitmapFont();
+		fps.setScale(0.1f);
 		
 		batch = new SpriteBatch();
 		
