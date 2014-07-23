@@ -3,7 +3,6 @@ package com.game.bomberboom.core;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class MyUserData {
-	private int ID;
 	private String name;
 	private Object object;
 	private Sprite sprite;
@@ -14,17 +13,6 @@ public class MyUserData {
 		this.sprite = sprite;
 	}
 	
-	
-	public int getID() {
-		return ID;
-	}
-
-
-	public void setID(int iD) {
-		ID = iD;
-	}
-
-
 	public String getName() {
 		return name;
 	}
