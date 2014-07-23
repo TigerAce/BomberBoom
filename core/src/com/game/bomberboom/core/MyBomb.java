@@ -20,25 +20,33 @@ import com.game.bomberboom.model.Bomb;
 
 public class MyBomb extends Bomb{
 
+	/**
+	 * record bombs and explosions
+	 */
 	public static ArrayList<MyBomb> BombList = new ArrayList<MyBomb>();
 	public static ArrayList<ParticleExplosion> Explosions = new ArrayList<ParticleExplosion>();
+
+	/**
+	 * box2d parameters
+	 */
+	public World world;
+	private Body bombBody;
+	private BodyDef bombDef;
+	private FixtureDef bombFixtureDef;
+	private Shape bombShape;
 	
+	
+	 
 	private boolean isDrawn;
 	private MyPlayer owner;
-	private World world;
-	private Body bombBody;
 	
-	
-	private BodyDef bombDef;
-	private FixtureDef fixtureDef;
-	private Shape shape;
 	
 	MyBomb(int x, int y, float time, float powerX, float powerY, World world) {
 		super(x, y, time, powerX, powerY);
 	
 		this.world = world;
 		bombDef = new BodyDef();
-		fixtureDef = new FixtureDef();
+		bombFixtureDef = new FixtureDef();
 	
 		//default setting of bomb
 	
@@ -46,13 +54,13 @@ public class MyBomb extends Bomb{
 		bombDef.position.set(x, y);
 		
 		//shape
-		shape = new CircleShape();
-		shape.setRadius(.50f);
+		bombShape = new CircleShape();
+		bombShape.setRadius(.50f);
 		
 		//fixture
-		fixtureDef.density = 2.5f;
-		fixtureDef.friction = .25f;
-		fixtureDef.restitution = .75f;
+		bombFixtureDef.density = 2.5f;
+		bombFixtureDef.friction = .25f;
+		bombFixtureDef.restitution = .75f;
 	}
 
 	public static ArrayList<ParticleExplosion> getExplosions() {
@@ -89,20 +97,7 @@ public class MyBomb extends Bomb{
 		this.owner = owner;
 	}
 
-	public Body getBody(){
-		return this.bombBody;
-	}
-	/**
-	 * getter & setter
-	 * @return
-	 */
-	public World getWorld() {
-		return world;
-	}
-
-	public void setWorld(World world) {
-		this.world = world;
-	}
+	
 
 	public Body getBombBody() {
 		return bombBody;
@@ -120,20 +115,20 @@ public class MyBomb extends Bomb{
 		this.bombDef = bombDef;
 	}
 
-	public FixtureDef getFixtureDef() {
-		return fixtureDef;
+	public FixtureDef getBombFixtureDef() {
+		return bombFixtureDef;
 	}
 
-	public void setFixtureDef(FixtureDef fixtureDef) {
-		this.fixtureDef = fixtureDef;
+	public void setBombFixtureDef(FixtureDef bombFixtureDef) {
+		this.bombFixtureDef = bombFixtureDef;
 	}
 
-	public Shape getShape() {
-		return shape;
+	public Shape getBombShape() {
+		return bombShape;
 	}
 
-	public void setShape(Shape shape) {
-		this.shape = shape;
+	public void setBombShape(Shape bombShape) {
+		this.bombShape = bombShape;
 	}
 
 	public static ArrayList<MyBomb> getBombList() {
@@ -172,7 +167,7 @@ public class MyBomb extends Bomb{
 								MyBomb.getExplosions().add(e);
 								
 								
-								world.destroyBody(getBody());  
+								world.destroyBody(getBombBody());  
 								MyBomb.getBombList().remove(this);
 								
 			         }
@@ -184,13 +179,16 @@ public class MyBomb extends Bomb{
 
 	@Override
 	public void draw() {
-		fixtureDef.shape = shape;
+		bombFixtureDef.shape = bombShape;
 		
 		bombBody = world.createBody(bombDef);
-		bombBody.createFixture(fixtureDef);
+		bombBody.createFixture(bombFixtureDef);
 		bombBody.setUserData(new MyUserData("bomb", this, null));
 		
-		shape.dispose();
 		
+	}
+	
+	protected void finialize(){
+		bombShape.dispose();
 	}
 }
