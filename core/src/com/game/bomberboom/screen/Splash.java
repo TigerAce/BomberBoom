@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.game.bomberboom.InputSource.SplashScreenController;
 import com.game.bomberboom.core.BomberBoom;
 import com.game.bomberboom.core.InputController;
 import com.game.bomberboom.tween.SpriteAccessor;
@@ -53,21 +54,7 @@ public class Splash implements Screen {
         /**
          * Keyboard bindings
          */
-        Gdx.input.setInputProcessor(new InputController(){
-            @Override
-            public boolean keyUp(int keycode){
-                        /**
-                         * KeyUp bindings for splash screen state
-                         */
-                        switch (keycode) {
-                            case Input.Keys.ESCAPE:
-                                // Skip the splash screen and go into GamePlay screen
-                                ((Game)Gdx.app.getApplicationListener()).setScreen(new GamePlay());
-                                break;
-                        }
-                return true;
-            }
-        });
+        Gdx.input.setInputProcessor(new SplashScreenController());
 
         batch = new SpriteBatch();
         tweenManager = new TweenManager();
