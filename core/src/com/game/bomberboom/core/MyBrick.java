@@ -23,6 +23,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.utils.Array;
 import com.game.bomberboom.model.Barrier;
+import com.game.bomberboom.model.GameObject;
 
 public class MyBrick extends Barrier{
 
@@ -53,6 +54,9 @@ public class MyBrick extends Barrier{
 
 	public MyBrick(float x, float y, float size, World world) {
 		super(x, y, size);
+		
+		GameObject.gameObjects.add(this);
+		
 		this.world = world;
 		
 		explodingBodies = new Vector<Body>();
@@ -634,6 +638,12 @@ public class MyBrick extends Barrier{
 	protected void finalized(){
 		brickShape.dispose();
 		brickSprite.getTexture().dispose();
+	}
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

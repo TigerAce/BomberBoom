@@ -44,8 +44,25 @@ public class CollisionListener implements ContactListener {
 
 	@Override
 	public void postSolve(Contact contact, ContactImpulse impulse) {
-	//	System.out.println("POS");
 	
+		MyUserData userDataA = (MyUserData)contact.getFixtureA().getBody().getUserData();
+		MyUserData userDataB = (MyUserData)contact.getFixtureB().getBody().getUserData();
+		if(userDataA != null && userDataB != null)
+		{
+			String nameA = userDataA.getName();
+		
+			String nameB = userDataB.getName();
+			if(nameA != null && nameB != null){
+				if(nameA == "particle" && nameB == "crate"){
+					((MyCrate)userDataB.getObject()).setLife(((MyCrate)userDataB.getObject()).getLife() - impulse.getNormalImpulses()[0]);
+					
+				}
+				if(nameA == "crate" && nameB == "particle"){
+					((MyCrate)userDataA.getObject()).setLife(((MyCrate)userDataA.getObject()).getLife() - impulse.getNormalImpulses()[0]);
+				
+				}
+			}
+		}
 	}
 
 }

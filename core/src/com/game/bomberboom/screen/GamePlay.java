@@ -3,15 +3,19 @@ package com.game.bomberboom.screen;
 
 import box2dLight.ConeLight;
 import box2dLight.RayHandler;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -26,6 +30,7 @@ import com.game.bomberboom.core.MyPlayer;
 import com.game.bomberboom.core.MyUserData;
 import com.game.bomberboom.core.ParticleExplosion;
 import com.game.bomberboom.core.MyPlayer.Direction;
+import com.game.bomberboom.model.GameObject;
 
 import java.util.ArrayList;
 
@@ -49,6 +54,8 @@ public class GamePlay implements Screen {
 	CollisionListener cl;
 	private MyPlayer player, player2;
 	private MyBrick testBrick;
+	
+	private Sprite backgroundSprite;
 	@Override
 	public void render(float delta) {
 		/**
@@ -57,10 +64,18 @@ public class GamePlay implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+		/**
+		 * render game objects
+		 */
+		for(int i = 0; i < GameObject.gameObjects.size(); i++){
+			GameObject o = GameObject.gameObjects.get(i);
+			o.update();
+		}
 
-		//move player
+		//render player
 		player.move();
 	
+		
 	
 		/**
 		 * search explosion and explode
@@ -87,6 +102,7 @@ public class GamePlay implements Screen {
 	
 		fps.draw(batch, Integer.toString(Gdx.graphics.getFramesPerSecond()), -30, 30);
 	
+	//	backgroundSprite.draw(batch);
 		
 		world.getBodies(bodies);
 		for(Body body : bodies){
@@ -166,8 +182,19 @@ public class GamePlay implements Screen {
 		   * lights setup
 		   */
 		  handler = new RayHandler(world);
-		  new ConeLight(handler, 1000, new Color(1,1,1,1), 700, -30, -30, 60, 60);
-	//	 new PointLight(handler, 5000, new Color(1,1,1,1), 1000 ,Gdx.graphics.getWidth()/2-500, Gdx.graphics.getHeight()/2 - 400);
+		  new ConeLight(handler, 1000, new Color(1,1,1,1), 130, -49.9f, -34.9f, 45, 45);
+		  new ConeLight(handler, 1000, new Color(1,1,1,1), 130, 49.9f, 34.9f, 225, 45);
+//			 new PointLight(handler, 5000, new Color(1,1,1,1), 1000 ,Gdx.graphics.getWidth()/2-500, Gdx.graphics.getHeight()/2 - 400);
+		//  handler.useDiffuseLight(true);
+	     handler.setAmbientLight(0.1f, 0.1f, 0.1f, 0.4f);
+	     
+/*	    Texture texture = new Texture(Gdx.files.internal("img/texture/grass1.jpg"));
+	     texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+	     backgroundSprite = new Sprite(texture);
+	     backgroundSprite.setSize(100 , 70 );
+
+	     backgroundSprite.setPosition(0 - 50, 0 - 35);*/
+	
 		
 		  
 		  
@@ -187,16 +214,28 @@ public class GamePlay implements Screen {
 		   * create brick
 		   */
 		
-		  testBrick = new MyBrick(20, 20, 4, world);
+		  testBrick = new MyBrick(-20, 0, 4, world);
 		  testBrick.draw();
 		  
 		/**
-		 * create crate
+		 * create bunch of crate
 		 */
+		  float factor = 0f;
+		  float crateSize = 4;
+		  float scaleSize = 5;
+		  float x = 10;
+		  float y = 10;
+		  
+			for(int w = 0; w < scaleSize; w++){
+				for(int h = 0; h < scaleSize; h++){
+					MyCrate c = new MyCrate(x - ((crateSize * scaleSize)/2) + crateSize/2 + (w * (crateSize + factor)) , y - ((crateSize * scaleSize)/2) + crateSize/2 + (h * (crateSize + factor)), crateSize, world);
+					c.draw();
+				}
+			}
 	//	brick = new MyBrick(0,0,1,world);
 	//	brick.draw();
-		MyCrate crate1 = new MyCrate(0, 0, 4 ,world);
-		crate1.draw();
+	//	MyCrate crate1 = new MyCrate(0, 0, 4 ,world);
+	//	crate1.draw();
 		
 	//	MyCrate crate2 = new MyCrate(-10, -10, 8, 0.2f,world);
 	//	crate2.draw();

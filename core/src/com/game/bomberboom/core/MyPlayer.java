@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.game.bomberboom.model.GameObject;
 import com.game.bomberboom.model.Player;
 
 public class MyPlayer extends Player{
@@ -34,6 +35,9 @@ public class MyPlayer extends Player{
 	
 	public MyPlayer(int xPos, int yPos, float speed, float size, World world, Direction dir) {
 		super(xPos, yPos, speed);
+		
+		GameObject.gameObjects.add(this);
+		
 		this.world = world;
 		this.size = size;
 		this.dir = dir;
@@ -287,6 +291,14 @@ public class MyPlayer extends Player{
 	protected void finalize ()  {
 		playerShape.dispose();
     }
+
+
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 
 }

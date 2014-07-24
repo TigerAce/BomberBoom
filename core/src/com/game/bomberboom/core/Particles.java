@@ -64,7 +64,7 @@ public class Particles {
 		body.setLinearVelocity(blastPower * dirVector.x,
 							 blastPower * dirVector.y);
 		
-		body.setUserData(new MyUserData("particles", this, null));
+		body.setUserData(new MyUserData("particle", this, null));
 		
 	}
 	

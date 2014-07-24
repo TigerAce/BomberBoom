@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 
 
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.game.bomberboom.model.Bomb;
+import com.game.bomberboom.model.GameObject;
 
 
 public class MyBomb extends Bomb{
@@ -44,6 +46,8 @@ public class MyBomb extends Bomb{
 	MyBomb(int x, int y, float time, float powerX, float powerY, World world) {
 		super(x, y, time, powerX, powerY);
 	
+		GameObject.gameObjects.add(this);
+		
 		this.world = world;
 		bombDef = new BodyDef();
 		bombFixtureDef = new FixtureDef();
@@ -169,6 +173,7 @@ public class MyBomb extends Bomb{
 								
 								world.destroyBody(getBombBody());  
 								MyBomb.getBombList().remove(this);
+								GameObject.gameObjects.remove(this);
 								
 			         }
 			      });
@@ -190,5 +195,11 @@ public class MyBomb extends Bomb{
 	
 	protected void finialize(){
 		bombShape.dispose();
+	}
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+		
 	}
 }

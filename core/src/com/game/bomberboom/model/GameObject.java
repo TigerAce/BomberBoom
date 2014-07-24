@@ -1,10 +1,14 @@
 package com.game.bomberboom.model;
 
+import java.util.ArrayList;
+
 public abstract class GameObject {
 	protected float x;
 	protected float y;
 	
-	GameObject(float x, float y){
+	public static ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
+	
+	public GameObject(float x, float y){
 		this.x = x;
 		this.y = y;
 	}
@@ -22,5 +26,6 @@ public abstract class GameObject {
 	}
 	
 	public abstract void draw();
+	public abstract void update();
 
 }
