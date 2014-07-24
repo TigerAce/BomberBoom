@@ -50,7 +50,7 @@ public class GamePlay implements Screen {
     @Override
     public void render(float delta) {
         /**
-         * render background
+         * Clear screen with white color
          */
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -125,8 +125,6 @@ public class GamePlay implements Screen {
     public void resize(int width, int height) {
         camera.viewportWidth = width / 10;
         camera.viewportHeight = height / 10;
-
-
     }
 
     @Override
