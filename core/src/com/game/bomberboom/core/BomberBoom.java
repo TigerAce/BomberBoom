@@ -9,8 +9,9 @@ public class BomberBoom extends Game {
     /**
      * Define different game state
      */
-	public static final int SPLASH_SCREEN_STATE = 0;
-    public static final int GAME_PLAY_STATE = 1;
+    public static final int INIT_STATE = 0;
+	public static final int SPLASH_SCREEN_STATE = 1;
+    public static final int GAME_PLAY_STATE = 2;
 
     /**
      * Set the initial game state to -1, so that it won't math any of the states declared above.
@@ -20,6 +21,12 @@ public class BomberBoom extends Game {
 
 	@Override
 	public void create () {
+
+        /**
+         * Set up initial game state
+         */
+        gameState = INIT_STATE;
+
         /**
          * A splash screen will be loaded when game starts
          * GamePlay screen will be loaded after this Splash screen, which is implemented inside Splash.show()
